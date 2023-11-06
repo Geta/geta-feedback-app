@@ -1,0 +1,43 @@
+﻿@page "/"
+
+@inject NavigationManager Navigator
+@inject IConfiguration Configuration
+@inject IJSRuntime JSRuntime
+@inject IHttpClientFactory ClientFactory
+
+<PageTitle>Feedback App</PageTitle>
+
+<div></div>
+<div class="bg-white p-5 rounded-5 shadow-lg d-flex flex-column flex-shrink-0" style="width:600px; height:fit-content">
+    <h1 class="feedback-heading text-center">Your feedback</h1>
+    <hr />
+    <EditForm EditContext="@editContext" OnValidSubmit="@AddRecord">
+        <DataAnnotationsValidator />
+        <div class="mb-3">
+            <label for="subjectInput" class="form-label">Subject</label>
+            <InputText @bind-Value="@FeedbackModel!.Subject" id="subjectInput" class="form-control"/>
+            <ValidationMessage For="@(() => FeedbackModel!.Subject)" class="invalid-feedback" />
+        </div>
+        <div class="mb-3">
+            <label for="bodyInput" class="form-label">Body</label>
+            <InputTextArea @bind-Value="@FeedbackModel!.Body" id="bodyInput" class="form-control" style="resize:none; height:300px" />
+            <ValidationMessage For="@(() => FeedbackModel!.Body)" class="invalid-feedback" />
+        </div>
+        <div class="mb-3">
+            <label for="bodyInput" class="form-label">Captcha</label>
+            <Captcha @bind-Value="@FeedbackModel!.CaptchaToken" id="captchaInput" class="d-flex justify-content-center"></Captcha>
+            <ValidationMessage For="@(() => FeedbackModel!.CaptchaToken)" class="invalid-feedback" />
+        </div>
+        <button type="submit" class="w-100 btn btn-primary mb-3 rounded-pill" disabled="@Loading">
+            @if (Loading)
+            {
+                <span class="spinner-border"></span>
+                <span>Loading...</span>
+            }
+            else
+            {
+                <span>Submit</span>
+            }
+        </button>
+    </EditForm>
+</div>

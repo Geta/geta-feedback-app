@@ -1,0 +1,84 @@
+﻿// blazor default styling from site.css
+
+@use "../blazor/site.css" as *;
+
+// some bootstrap class imports
+
+@import "../bootstrap/scss/functions";
+@import "../bootstrap/scss/variables";
+@import "../bootstrap/scss/mixins";
+
+// bootstrap default variable overwrite
+
+$primary: $gray-600;
+
+$custom-colors: (
+    "primary": $gray-600
+);
+
+$theme-colors: map-merge($theme-colors, $custom-colors);
+
+// the rest of bootstrap
+
+@import "../bootstrap/scss/bootstrap.scss";
+
+// bootstrap additional changes
+
+.btn-primary {
+    --bs-btn-active-bg: #{shade-color($primary, 30%)};
+}
+
+// added fonts
+
+@font-face {
+    font-family: Sofia;
+    src: url(/fonts/sofia_pro_regular-webfont.woff2) format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: Sofia;
+    src: url(/fonts/sofia_pro_medium-webfont.woff2) format('woff2');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: Sofia;
+    src: url(/fonts/sofia_pro_bold-webfont.woff2) format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+// additional css rules
+
+h1 {
+    font-family: Sofia, sans-serif;
+    font-weight: 700;
+    font-size: 32px;
+}
+
+.feedback-heading {
+    font-family: Sofia, sans-serif;
+    font-weight: 400;
+    font-size: 42px;
+}
+
+h2 {
+    font-family: Sofia, sans-serif;
+    font-weight: 500;
+    font-size: 24px;
+}
+
+p, label, .btn {
+    font-family: Sofia, sans-serif;
+    font-weight: 400
+}
+
+body {
+    color: #151515;
+}
