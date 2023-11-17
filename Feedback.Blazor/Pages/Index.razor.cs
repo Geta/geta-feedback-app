@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
 using Feedback.Blazor.Utilities;
-using Feedback.Blazor.Models;
+using Feedback.Models;
 using Microsoft.JSInterop;
 using System.Text.Json;
 
@@ -8,54 +8,51 @@ namespace Feedback.Blazor.Pages;
 
 public partial class Index
 {
-    private EditContext? editContext;
-    private FeedbackModel.Feedback? FeedbackModel = new();
-    private FeedbackOptions feedbackOptions = new();
-    private FeedbackService? feedbackService;
-
-    private GoogleReCaptchaOptions googleReCaptchaOptions = new();
-
-    private bool Loading = false;
+    private EditContext? _editContext;
+    private FeedbackModel.Feedback? _feedbackModel = new();
+    private FeedbackService? _feedbackService;
+    private bool _loading;
 
     protected override void OnInitialized()
     {
-        FeedbackModel ??= new();
-        editContext = new(FeedbackModel);
-        editContext.SetFieldCssClassProvider(new BootstrapValidationClassProvider());
+        _feedbackModel ??= new();
+        _editContext = new(_feedbackModel);
+        _editContext.SetFieldCssClassProvider(new BootstrapValidationClassProvider());
 
-        Configuration.GetSection(FeedbackOptions.Section).Bind(feedbackOptions);
-        feedbackService = new(feedbackOptions);
-        
-        FeedbackModel.Country = feedbackOptions.Country;
-        FeedbackModel.Status = Models.FeedbackModel.FeedbackStatuses.Open;
+        _feedbackService = new(Options);
 
-        Configuration.GetSection(GoogleReCaptchaOptions.Section).Bind(googleReCaptchaOptions);
+        _feedbackModel.Country = Options.Country;
+        _feedbackModel.Status = FeedbackModel.FeedbackStatuses.Open;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            await JSRuntime.InvokeAsync<int>("googleReCaptcha", DotNetObjectReference.Create(this), "google-reCaptcha", googleReCaptchaOptions.SiteKey);
+            await JSRuntime.InvokeAsync<int>(
+                "googleReCaptcha",
+                DotNetObjectReference.Create(this),
+                "google-reCaptcha",
+                ReCaptchaOptions.Value.SiteKey);
         }
     }
 
     private async Task AddRecord()
     {
-        Loading = true;
+        _loading = true;
         try
         {
             var verificationResponse = await VerifyReCaptcha();
-            if (verificationResponse.Success)
+            if (verificationResponse?.Success ?? false)
             {
-                await feedbackService!.AddFeedbackToTable(FeedbackModel!);
+                await _feedbackService!.AddFeedbackToTable(_feedbackModel!);
                 Navigator.NavigateTo("thank-you");
-                Loading = false;
+                _loading = false;
             }
         }
         catch (Exception)
         {
-            Loading = false;
+            _loading = false;
             throw;
         }
     }
@@ -63,24 +60,25 @@ public partial class Index
     [JSInvokable]
     public void CallbackOnSuccess(string response)
     {
-        FeedbackModel!.CaptchaToken = response;
-        editContext!.Validate();
+        _feedbackModel!.CaptchaToken = response;
+        _editContext!.Validate();
     }
 
     private async Task<ReCaptchaVerificationResponse?> VerifyReCaptcha()
     {
         var message = new FormUrlEncodedContent(new Dictionary<string, string>
         {
-            { "secret", googleReCaptchaOptions.Secret },
-            { "response", FeedbackModel!.CaptchaToken! }
+            { "secret", ReCaptchaOptions.Value.Secret },
+            { "response", _feedbackModel!.CaptchaToken! }
         });
         var client = ClientFactory.CreateClient();
-        
+
         var response = await client.PostAsync("https://www.google.com/recaptcha/api/siteverify", message);
         response.EnsureSuccessStatusCode();
 
         var responseContent = await response.Content.ReadAsStringAsync();
         var verificationResponse = JsonSerializer.Deserialize<ReCaptchaVerificationResponse>(responseContent);
+
         return verificationResponse;
     }
 }

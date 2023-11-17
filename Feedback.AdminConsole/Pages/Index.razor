@@ -1,0 +1,34 @@
+﻿@page "/"
+
+@inject IConfiguration Configuration
+@inject NavigationManager Navigator
+
+<PageTitle>Feedback App</PageTitle>
+
+<div class="bg-white p-5 rounded-5 shadow-lg d-flex flex-column flex-shrink-0" style="width:600px; height:fit-content">
+    <div class="d-block">
+        <h1>Feedbacks:</h1>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Timestamp</th>
+                    <th scope="col">Subject</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">View Details</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var feedback in feedbacks)
+            {
+                <tr>
+                    <td>@feedback.Timestamp</td>
+                    <td>@feedback.Subject</td>
+                    <td>@feedback.Status</td>
+                    <td><button @onclick="@(() => NavigateToFeedbackDetails(feedback.RowKey))" class="btn btn-primary">View</button></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+

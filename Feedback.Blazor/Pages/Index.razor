@@ -1,35 +1,38 @@
 ﻿@page "/"
+@using Feedback.Models
+@using Microsoft.Extensions.Options
+@using Feedback.Blazor.Utilities
 
 @inject NavigationManager Navigator
-@inject IConfiguration Configuration
+@inject FeedbackOptions Options
+@inject IOptions<GoogleReCaptchaOptions> ReCaptchaOptions
 @inject IJSRuntime JSRuntime
 @inject IHttpClientFactory ClientFactory
 
 <PageTitle>Feedback App</PageTitle>
 
-<div></div>
 <div class="bg-white p-5 rounded-5 shadow-lg d-flex flex-column flex-shrink-0" style="width:600px; height:fit-content">
     <h1 class="feedback-heading text-center">Your feedback</h1>
     <hr />
-    <EditForm EditContext="@editContext" OnValidSubmit="@AddRecord">
+    <EditForm EditContext="@_editContext" OnValidSubmit="@AddRecord">
         <DataAnnotationsValidator />
         <div class="mb-3">
             <label for="subjectInput" class="form-label">Subject</label>
-            <InputText @bind-Value="@FeedbackModel!.Subject" id="subjectInput" class="form-control"/>
-            <ValidationMessage For="@(() => FeedbackModel!.Subject)" class="invalid-feedback" />
+            <InputText @bind-Value="@_feedbackModel!.Subject" id="subjectInput" class="form-control"/>
+            <ValidationMessage For="@(() => _feedbackModel!.Subject)" class="invalid-feedback" />
         </div>
         <div class="mb-3">
             <label for="bodyInput" class="form-label">Body</label>
-            <InputTextArea @bind-Value="@FeedbackModel!.Body" id="bodyInput" class="form-control" style="resize:none; height:300px" />
-            <ValidationMessage For="@(() => FeedbackModel!.Body)" class="invalid-feedback" />
+            <InputTextArea @bind-Value="@_feedbackModel!.Body" id="bodyInput" class="form-control" style="resize:none; height:300px" />
+            <ValidationMessage For="@(() => _feedbackModel!.Body)" class="invalid-feedback" />
         </div>
         <div class="mb-3">
             <label for="bodyInput" class="form-label">Captcha</label>
-            <Captcha @bind-Value="@FeedbackModel!.CaptchaToken" id="captchaInput" class="d-flex justify-content-center"></Captcha>
-            <ValidationMessage For="@(() => FeedbackModel!.CaptchaToken)" class="invalid-feedback" />
+            <Captcha @bind-Value="@_feedbackModel!.CaptchaToken" id="captchaInput" class="d-flex justify-content-center"></Captcha>
+            <ValidationMessage For="@(() => _feedbackModel!.CaptchaToken)" class="invalid-feedback" />
         </div>
-        <button type="submit" class="w-100 btn btn-primary mb-3 rounded-pill" disabled="@Loading">
-            @if (Loading)
+        <button type="submit" class="w-100 btn btn-primary mb-3 rounded-pill" disabled="@_loading">
+            @if (_loading)
             {
                 <span class="spinner-border"></span>
                 <span>Loading...</span>
