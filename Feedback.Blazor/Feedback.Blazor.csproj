@@ -20,19 +20,23 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.Data.Tables" Version="12.8.1" />
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.18.0" />
-    <PackageReference Include="Azure.Storage.Files.Shares" Version="12.16.0" />
-    <PackageReference Include="Azure.Storage.Queues" Version="12.16.0" />
+    <PackageReference Include="Azure.Data.Tables" Version="12.8.2" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.19.0" />
+    <PackageReference Include="Azure.Storage.Files.Shares" Version="12.17.0" />
+    <PackageReference Include="Azure.Storage.Queues" Version="12.17.0" />
     <PackageReference Include="BuildWebCompiler2022" Version="1.14.10" />
-    <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.35.4" />
-    <PackageReference Include="Microsoft.Extensions.Azure" Version="1.7.0" />
+    <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.36.0" />
+    <PackageReference Include="Microsoft.Extensions.Azure" Version="1.7.1" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="wwwroot\css\" />
     <Folder Include="wwwroot\images\" />
     <Folder Include="wwwroot\fonts\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Feedback.Models\Feedback.Models.csproj" />
   </ItemGroup>
 
 </Project>
