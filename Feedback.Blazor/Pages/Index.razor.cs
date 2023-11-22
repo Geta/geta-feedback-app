@@ -29,6 +29,8 @@ public partial class Index
     {
         if (firstRender)
         {
+            await Task.Delay(TimeSpan.FromSeconds(1));
+
             await JSRuntime.InvokeAsync<int>(
                 "googleReCaptcha",
                 DotNetObjectReference.Create(this),
